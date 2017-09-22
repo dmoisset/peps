@@ -1672,6 +1672,9 @@ Additional notes on stub files:
   or ``from .ham import Ham``, then ``ham`` is an exported attribute
   of ``spam``.
 
+* Stub files do not need to quote forward references, given that they are not
+  supposed to be actually executed.
+
 * Stub files may be incomplete. To make type checkers aware of this, the file
   can contain the following code::
 
