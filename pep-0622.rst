@@ -76,7 +76,7 @@ and that's why the matching succeeds. Note however that no actual object is
 constructed, in the same way that a Python assignment ``[a, b] = my_list``
 doesn't create a new ``[a, b]`` list.
 
-This **patterns** are used in a new statement called ``match``. This statement
+These patterns are used in a new statement called ``match``. This statement
 tries to match multiple patterns in order to a single object, and for the
 first successful match, the variables in the pattern are assigned and a
 corresponding block is executed. Each one of the multiple branches of this
