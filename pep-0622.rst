@@ -45,6 +45,59 @@ goal of this proposal, and this design
 focuses instead on generalizing sequence, mapping, and object destructuring.
 
 
+Informal Overview
+=================
+
+This section gives an informal presentation of the new syntax and how to read
+it. It can be informative if you're unfamiliar with the feature, although the
+description here is not intended to be perfectly accurate.
+
+A new syntactic construct called *pattern* is introduced. Syntactically 
+patterns look like a subset of expressions; the following are patterns:
+
+- ``[first, second, *rest]``
+- ``Point2d(x, 0)``
+- ``{"name": "Rod", "age": age}``
+- ``42``
+
+If the above were interpreted as expressions, they could be read as object
+construction. The meaning of a pattern is actually the reverse, object
+deconstruction; when matched to an object, a pattern sets the free variables
+in the pattern that would result in the desired value. For example, matching
+``Point2d(x, 0)`` to a value of ``Point2d(3, 0)`` successfully matches and
+binds ``x`` to 3. A match could also fail, meaning that there are no values of
+the variables
+
+In short a pattern tries to answer the question "Are there values for my
+variables be set that would make me produce the matched object?", and if the
+answer is "yes", the pattern assigns to those variables. In the example above,
+setting ``x`` to 3 would make the pattern produce the value ``Point2d(3, 0)``,
+and that's why the matching succeeds. Note however that no actual object is
+constructed, in the same way that a Python assignment ``[a, b] = my_list``
+doesn't create a new ``[a, b]`` list.
+
+This **patterns** are used in a new statement called ``match``. This statement
+tries to match multiple patterns in order to a single object, and for the
+first successful match, the variables in the pattern are assigned and a
+corresponding block is executed. Each one of the multiple branches of this
+conditional statement can also have a boolean condition. Here's an example
+use of a match statement, used to define a function building 3d points that can
+accept as input either tuples of size 2 or 3, or existing points::
+
+    def make_point_3d(pt):
+        match pt:
+            case (x, y): return Point3d(x, y, 0)
+            case (x, y, z): return Point3d(x, y, z)
+            case Point2d(x, y): return Point3d(x, y, 0)
+            case Point3d(_, _, _): return pt
+            case _: raise TypeError("not a point we support")
+
+Writing this function in the traditional fashion would require multiple 
+``isinstance()`` checks, a pair of ``len()`` calls, and a more convoluted
+control flow. While the ``match`` version translates into similar code under
+the hood, to a reader familiar with patterns it is much clearer.
+
+
 Rationale and Goals
 ===================
 
